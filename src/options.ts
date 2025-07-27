@@ -85,140 +85,236 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const render = () => {
-    root.innerHTML = `
-      <div class='options'>
-        <h3>WebHooks Configuration</h3>
-        <div id="webhookList">
-          ${webhooks.map((webhook, index) => `
-            <div class="webhook-entry">
-              <h4>Webhook ${index + 1}: ${webhook.name || '(New Webhook)'}</h4>
-              <label>Webhook Name:</label>
-              <input type="text" class="webhook-name" value="${webhook.name || ''}" data-index="${index}" placeholder="e.g., My Slack Channel, Bitrise iOS Upload" />
+    // Clear existing content
+    root.innerHTML = '';
 
-              <label>Document URL Patterns: <a href="${MATCH_PATTERNS_URL}" target="_blank">(Match Patterns)</a></label>
-              <textarea class="document-url-patterns" data-index="${index}" placeholder="One pattern per line. Webhook appears on pages matching these URLs.">${(webhook.documentUrlPatterns || []).join('\n')}</textarea>
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'options';
+    root.appendChild(optionsDiv);
 
-              <label>Target URL Patterns: <a href="${MATCH_PATTERNS_URL}" target="_blank">(Match Patterns)</a></label>
-              <textarea class="target-url-patterns" data-index="${index}" placeholder="One pattern per line. Webhook applies to links/images matching these URLs.">${(webhook.targetUrlPatterns || []).join('\n')}</textarea>
+    const h3 = document.createElement('h3');
+    h3.textContent = 'WebHooks Configuration';
+    optionsDiv.appendChild(h3);
 
-              <label>HTTP Method:</label>
-              <select class="action-method" data-index="${index}">
-                <option value="POST" ${webhook.action?.method === 'POST' ? 'selected' : ''}>POST</option>
-                <option value="GET" ${webhook.action?.method === 'GET' ? 'selected' : ''}>GET</option>
-              </select>
+    const webhookListDiv = document.createElement('div');
+    webhookListDiv.id = 'webhookList';
+    optionsDiv.appendChild(webhookListDiv);
 
-              <label>Webhook Endpoint URL:</label>
-              <input type="text" class="action-url" value="${webhook.action?.url || ''}" data-index="${index}" placeholder="e.g., https://hooks.slack.com/services/..." />
+    webhooks.forEach((webhook, index) => {
+      const webhookEntryDiv = document.createElement('div');
+      webhookEntryDiv.className = 'webhook-entry';
+      webhookListDiv.appendChild(webhookEntryDiv);
 
-              <label>Request Body (JSON):</label>
-              <textarea class="action-payload" data-index="${index}" placeholder="JSON payload. {{content}}, {{isoDateTime}}, {{localDateTime}} are supported.">${
-                webhook.action?.payload ? JSON.stringify(webhook.action.payload, null, 2) : ''
-              }</textarea>
+      const h4 = document.createElement('h4');
+      h4.textContent = `Webhook ${index + 1}: ${webhook.name || '(New Webhook)'}`;
+      webhookEntryDiv.appendChild(h4);
 
-              <label>Request Headers:</label>
-              <div class="headers-container" data-webhook-index="${index}">
-                ${Object.entries(webhook.action?.headers || {}).map(([key, value]) => `
-                  <div class="header-entry">
-                    <input type="text" class="header-key" value="${key}" data-webhook-index="${index}" data-header-key="${key}" placeholder="Header Name" />
-                    <input type="text" class="header-value" value="${value}" data-webhook-index="${index}" data-header-key="${key}" placeholder="Header Value" />
-                    <button class="remove-header" data-webhook-index="${index}" data-header-key="${key}">Remove</button>
-                  </div>
-                `).join('')}
-                <button class="add-header" data-webhook-index="${index}">Add Header</button>
-              </div>
-
-              <button class="remove-webhook" data-index="${index}">Remove Webhook</button>
-            </div>
-          `).join('')}
-        </div>
-        <div class="bottom-buttons">
-          <button id="addWebhook">Add New Webhook</button>
-          <div id="saveStatus" class="${error ? 'error' : ''}">${saveStatus}</div>
-          <button id="saveOptions">Save Options</button>
-        </div>
-      </div>
-    `;
-
-    document.getElementById('addWebhook')?.addEventListener('click', addWebhook);
-    document.getElementById('saveOptions')?.addEventListener('click', debouncedSave);
-
-    document.querySelectorAll('.remove-webhook').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const index = parseInt((e.target as HTMLButtonElement).dataset.index || '0');
-        removeWebhook(index);
+      // Webhook Name
+      const nameLabel = document.createElement('label');
+      nameLabel.textContent = 'Webhook Name:';
+      webhookEntryDiv.appendChild(nameLabel);
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.className = 'webhook-name';
+      nameInput.value = webhook.name || '';
+      nameInput.placeholder = 'e.g., My Slack Channel, Bitrise iOS Upload';
+      nameInput.addEventListener('input', () => {
+        webhooks[index].name = nameInput.value;
+        h4.textContent = `Webhook ${index + 1}: ${nameInput.value || '(New Webhook)'}`;
       });
-    });
+      webhookEntryDiv.appendChild(nameInput);
 
-    document.querySelectorAll('.add-header').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const index = parseInt((e.target as HTMLButtonElement).dataset.webhookIndex || '0');
-        addHeader(index);
+      // Document URL Patterns
+      const docPatternsLabel = document.createElement('label');
+      docPatternsLabel.textContent = 'Document URL Patterns: ';
+      const docPatternsLink = document.createElement('a');
+      docPatternsLink.href = MATCH_PATTERNS_URL;
+      docPatternsLink.target = '_blank';
+      docPatternsLink.textContent = '(Match Patterns)';
+      docPatternsLabel.appendChild(docPatternsLink);
+      webhookEntryDiv.appendChild(docPatternsLabel);
+      const docPatternsTextarea = document.createElement('textarea');
+      docPatternsTextarea.className = 'document-url-patterns';
+      docPatternsTextarea.placeholder = 'One pattern per line. Webhook appears on pages matching these URLs.';
+      docPatternsTextarea.value = (webhook.documentUrlPatterns || []).join('\n');
+      docPatternsTextarea.addEventListener('input', () => {
+        webhooks[index].documentUrlPatterns = docPatternsTextarea.value.split('\n').filter(p => p.trim() !== '');
       });
-    });
+      webhookEntryDiv.appendChild(docPatternsTextarea);
 
-    document.querySelectorAll('.remove-header').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const webhookIndex = parseInt((e.target as HTMLButtonElement).dataset.webhookIndex || '0');
-        const headerKey = (e.target as HTMLButtonElement).dataset.headerKey || '';
-        removeHeader(webhookIndex, headerKey);
+      // Target URL Patterns
+      const targetPatternsLabel = document.createElement('label');
+      targetPatternsLabel.textContent = 'Target URL Patterns: ';
+      const targetPatternsLink = document.createElement('a');
+      targetPatternsLink.href = MATCH_PATTERNS_URL;
+      targetPatternsLink.target = '_blank';
+      targetPatternsLink.textContent = '(Match Patterns)';
+      targetPatternsLabel.appendChild(targetPatternsLink);
+      webhookEntryDiv.appendChild(targetPatternsLabel);
+      const targetPatternsTextarea = document.createElement('textarea');
+      targetPatternsTextarea.className = 'target-url-patterns';
+      targetPatternsTextarea.placeholder = 'One pattern per line. Webhook applies to links/images matching these URLs.';
+      targetPatternsTextarea.value = (webhook.targetUrlPatterns || []).join('\n');
+      targetPatternsTextarea.addEventListener('input', () => {
+        webhooks[index].targetUrlPatterns = targetPatternsTextarea.value.split('\n').filter(p => p.trim() !== '');
       });
-    });
+      webhookEntryDiv.appendChild(targetPatternsTextarea);
 
-    // Re-attach input listeners for dynamic fields
-    document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('.webhook-name, .document-url-patterns, .target-url-patterns, .action-method, .action-url, .action-payload').forEach(input => {
-      input.addEventListener('input', (e) => {
-        const index = parseInt((e.target as HTMLElement).dataset.index || '0');
-        const className = (e.target as HTMLElement).className; // Use className directly
-        const value = (e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value;
+      // HTTP Method
+      const methodLabel = document.createElement('label');
+      methodLabel.textContent = 'HTTP Method:';
+      webhookEntryDiv.appendChild(methodLabel);
+      const methodSelect = document.createElement('select');
+      methodSelect.className = 'action-method';
+      methodSelect.addEventListener('input', () => {
+        webhooks[index].action.method = methodSelect.value as 'GET' | 'POST';
+      });
+      webhookEntryDiv.appendChild(methodSelect);
+      const postOption = document.createElement('option');
+      postOption.value = 'POST';
+      postOption.textContent = 'POST';
+      postOption.selected = webhook.action?.method === 'POST';
+      methodSelect.appendChild(postOption);
+      const getOption = document.createElement('option');
+      getOption.value = 'GET';
+      getOption.textContent = 'GET';
+      getOption.selected = webhook.action?.method === 'GET';
+      methodSelect.appendChild(getOption);
 
-        // Update the webhook object in the array directly
-        const currentWebhook = webhooks[index];
-        if (!currentWebhook) return;
+      // Webhook Endpoint URL
+      const urlLabel = document.createElement('label');
+      urlLabel.textContent = 'Webhook Endpoint URL:';
+      webhookEntryDiv.appendChild(urlLabel);
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.className = 'action-url';
+      urlInput.value = webhook.action?.url || '';
+      urlInput.placeholder = 'e.g., https://hooks.slack.com/services/...';
+      urlInput.addEventListener('input', () => {
+        webhooks[index].action.url = urlInput.value;
+      });
+      webhookEntryDiv.appendChild(urlInput);
 
-        // Use classList.contains for more robust class checking
-        if (className.includes('webhook-name')) {
-          currentWebhook.name = value;
-        } else if (className.includes('document-url-patterns')) {
-          currentWebhook.documentUrlPatterns = value.split('\n').filter(p => p.trim() !== '');
-        } else if (className.includes('target-url-patterns')) {
-          currentWebhook.targetUrlPatterns = value.split('\n').filter(p => p.trim() !== '');
-        } else if (className.includes('action-method')) {
-          currentWebhook.action.method = value as 'GET' | 'POST';
-        } else if (className.includes('action-url')) {
-          currentWebhook.action.url = value;
-        } else if (className.includes('action-payload')) {
-          try {
-            currentWebhook.action.payload = value ? JSON.parse(value) : undefined;
-          } catch (e) {
-            console.warn('Invalid JSON payload during input', e);
+      // Request Body
+      const payloadLabel = document.createElement('label');
+      payloadLabel.textContent = 'Request Body (JSON):';
+      webhookEntryDiv.appendChild(payloadLabel);
+      const payloadTextarea = document.createElement('textarea');
+      payloadTextarea.className = 'action-payload';
+      payloadTextarea.placeholder = 'JSON payload. {{content}}, {{isoDateTime}}, {{localDateTime}} are supported.';
+      payloadTextarea.value = webhook.action?.payload ? JSON.stringify(webhook.action.payload, null, 2) : '';
+      payloadTextarea.addEventListener('input', () => {
+        try {
+          webhooks[index].action.payload = payloadTextarea.value ? JSON.parse(payloadTextarea.value) : undefined;
+        } catch (e) {
+          console.warn('Invalid JSON payload during input', e);
+        }
+      });
+      webhookEntryDiv.appendChild(payloadTextarea);
+
+      // Request Headers
+      const headersLabel = document.createElement('label');
+      headersLabel.textContent = 'Request Headers:';
+      webhookEntryDiv.appendChild(headersLabel);
+      const headersContainer = document.createElement('div');
+      headersContainer.className = 'headers-container';
+      webhookEntryDiv.appendChild(headersContainer);
+
+      const renderHeaders = () => {
+        headersContainer.innerHTML = '';
+        Object.entries(webhook.action?.headers || {}).forEach(([key, value]) => {
+          const headerEntryDiv = document.createElement('div');
+          headerEntryDiv.className = 'header-entry';
+          headersContainer.appendChild(headerEntryDiv);
+
+          const keyInput = document.createElement('input');
+          keyInput.type = 'text';
+          keyInput.className = 'header-key';
+          keyInput.value = key;
+          keyInput.placeholder = 'Header Name';
+          headerEntryDiv.appendChild(keyInput);
+
+          const valueInput = document.createElement('input');
+          valueInput.type = 'text';
+          valueInput.className = 'header-value';
+          valueInput.value = value as string;
+          valueInput.placeholder = 'Header Value';
+          headerEntryDiv.appendChild(valueInput);
+          
+          const removeHeaderButton = document.createElement('button');
+          removeHeaderButton.className = 'remove-header';
+          removeHeaderButton.textContent = 'Remove';
+          removeHeaderButton.addEventListener('click', () => {
+            if (webhooks[index].action.headers) {
+              delete webhooks[index].action.headers[key];
+            }
+            renderHeaders();
+          });
+          headerEntryDiv.appendChild(removeHeaderButton);
+          
+          keyInput.addEventListener('input', () => {
+            const newKey = keyInput.value;
+            const headers = webhooks[index].action.headers;
+            if (headers && newKey !== key) {
+              headers[newKey] = headers[key];
+              delete headers[key];
+              renderHeaders();
+            }
+          });
+
+          valueInput.addEventListener('input', () => {
+            if (webhooks[index].action.headers) {
+              webhooks[index].action.headers[key] = valueInput.value;
+            }
+          });
+        });
+
+        const addHeaderButton = document.createElement('button');
+        addHeaderButton.className = 'add-header';
+        addHeaderButton.textContent = 'Add Header';
+        addHeaderButton.addEventListener('click', () => {
+          if (!webhooks[index].action.headers) {
+            webhooks[index].action.headers = {};
           }
-        }
-        
-      });
+          const newKey = `new-header-${Date.now()}`;
+          webhooks[index].action.headers[newKey] = '';
+          renderHeaders();
+        });
+        headersContainer.appendChild(addHeaderButton);
+      };
+      renderHeaders();
+
+      // Remove Webhook Button
+      const removeWebhookButton = document.createElement('button');
+      removeWebhookButton.className = 'remove-webhook';
+      removeWebhookButton.textContent = 'Remove Webhook';
+      removeWebhookButton.addEventListener('click', () => removeWebhook(index));
+      webhookEntryDiv.appendChild(removeWebhookButton);
     });
 
-    document.querySelectorAll<HTMLInputElement>('.header-key, .header-value').forEach(input => {
-      input.addEventListener('input', (e) => {
-        const webhookIndex = parseInt((e.target as HTMLElement).dataset.webhookIndex || '0');
-        const oldHeaderKey = (e.target as HTMLElement).dataset.headerKey || '';
-        const newHeaderValue = (e.target as HTMLInputElement).value;
-        const isKeyField = (e.target as HTMLElement).classList.contains('header-key');
+    const bottomButtonsDiv = document.createElement('div');
+    bottomButtonsDiv.className = 'bottom-buttons';
+    optionsDiv.appendChild(bottomButtonsDiv);
 
-        const currentWebhook = webhooks[webhookIndex];
-        if (!currentWebhook || !currentWebhook.action.headers) return;
+    const addWebhookButton = document.createElement('button');
+    addWebhookButton.id = 'addWebhook';
+    addWebhookButton.textContent = 'Add New Webhook';
+    bottomButtonsDiv.appendChild(addWebhookButton);
 
-        if (isKeyField) {
-          const newKey = newHeaderValue;
-          const existingValue = currentWebhook.action.headers[oldHeaderKey];
-          delete currentWebhook.action.headers[oldHeaderKey];
-          currentWebhook.action.headers[newKey] = existingValue;
-          (e.target as HTMLElement).dataset.headerKey = newKey; // Update data-header-key
-        } else {
-          currentWebhook.action.headers[oldHeaderKey] = newHeaderValue;
-        }
-        
-      });
-    });
+    const saveStatusDiv = document.createElement('div');
+    saveStatusDiv.id = 'saveStatus';
+    saveStatusDiv.className = error ? 'error' : '';
+    saveStatusDiv.textContent = saveStatus;
+    bottomButtonsDiv.appendChild(saveStatusDiv);
+
+    const saveOptionsButton = document.createElement('button');
+    saveOptionsButton.id = 'saveOptions';
+    saveOptionsButton.textContent = 'Save Options';
+    bottomButtonsDiv.appendChild(saveOptionsButton);
+
+    // Event Listeners
+    addWebhookButton.addEventListener('click', addWebhook);
+    saveOptionsButton.addEventListener('click', debouncedSave);
   };
 
   await loadConfig();
