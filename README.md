@@ -1,6 +1,6 @@
 ## Send To WebHook
 
-A Browser Extension to send links, images, or selected text to configurable webhooks.
+A Firefox add‑on to send links, images, or selected text to configurable webhooks.
 ### How to Configure
 Configure your webhooks to quickly send page information to predefined endpoints. Each webhook configuration includes the following fields:
 *   **Webhook Name**: A descriptive name for your webhook (e.g., "My Slack Channel", "Bitrise iOS Upload"). This name will appear in the extension's popup menu.

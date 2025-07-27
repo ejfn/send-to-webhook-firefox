@@ -5,10 +5,10 @@
 
 ## Project Details
 
-This project is a Chrome Extension that has been upgraded to Manifest V3 and re-implemented using vanilla JavaScript/TypeScript. The build process is now simplified using `tsc` and basic `cp` commands.
+This project is a Firefox add‑on (converted from a Chrome extension), implemented using Manifest V3 and vanilla JavaScript/TypeScript. The build process is now simplified using `tsc` and basic `cp` commands.
 
 **Key changes include:**
-- Migration to Manifest V3.
+- Conversion from Chrome extension to Firefox add‑on and migration to Manifest V3.
 - Re-implementation of UI from React to vanilla JavaScript.
 - Form-based editor for webhook configuration.
 - Simplified build process.
