@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc && cp -r public/. dist/",
     "web-ext:run": "web-ext run --source-dir dist/",
-    "web-ext:build": "web-ext build --source-dir dist/ --artifacts-dir dist-artifacts/"
+    "web-ext:build": "web-ext build --source-dir dist/ --artifacts-dir dist-artifacts/ --overwrite-dest"
   },
   "devDependencies": {
     "@types/firefox-webext-browser": "^120.0.4",
