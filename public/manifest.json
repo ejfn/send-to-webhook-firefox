@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Send To WebHook",
+  "version": "2.0.0",
+  "description": "Send link, image or selected text to webhooks by filters",
+  "background": {
+    "scripts": [
+      "scripts/background.js"
+    ]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "send-to-webhook-firefox@ejfn.github.com"
+    }
+  },
+  "action": {
+    "default_title": "Send To WebHook"
+  },
+  "permissions": [
+    "contextMenus",
+    "storage"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "options_ui": {
+    "page": "options.html"
+  }
+}

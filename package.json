@@ -1,0 +1,15 @@
+{
+  "name": "send-to-webhook",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "rm -rf dist/ && tsc && cp -r public/. dist/",
+    "test": "web-ext run --source-dir dist/",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^120.0.4",
+    "typescript": "^5.0.0",
+    "web-ext": "^8.9.0"
+  }
+}
