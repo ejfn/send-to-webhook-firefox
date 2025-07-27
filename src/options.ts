@@ -133,11 +133,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
         <div class="bottom-buttons">
           <button id="addWebhook">Add New Webhook</button>
+          <div id="saveStatus" class="${error ? 'error' : ''}">${saveStatus}</div>
+          <button id="saveOptions">Save Options</button>
         </div>
       </div>
     `;
 
     document.getElementById('addWebhook')?.addEventListener('click', addWebhook);
+    document.getElementById('saveOptions')?.addEventListener('click', debouncedSave);
 
     document.querySelectorAll('.remove-webhook').forEach(button => {
       button.addEventListener('click', (e) => {
@@ -190,7 +193,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.warn('Invalid JSON payload during input', e);
           }
         }
-        debouncedSave();
+        
       });
     });
 
@@ -213,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
           currentWebhook.action.headers[oldHeaderKey] = newHeaderValue;
         }
-        debouncedSave();
+        
       });
     });
   };

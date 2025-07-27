@@ -14,7 +14,7 @@ Configure your webhooks to quickly send page information to predefined endpoints
 *   **Webhook Endpoint URL**: The full URL of the target endpoint where the data will be sent (e.g., `https://hooks.slack.com/services/...`).
 
 *   **Request Body (JSON)**: (Optional) Define the request body as a JSON object or a plain string. You can use the following placeholders to dynamically insert content:
-    *   `{{content}}`: Inserts the selected text, link URL, image URL, or current page URL/title depending on the context.
+    *   `{{content}}`: Inserts the selected text, link URL, or image URL depending on the context.
     *   `{{isoDateTime}}`: Inserts the current date and time in ISO format.
     *   `{{localDateTime}}`: Inserts the current date and time in locale format.
 
@@ -81,10 +81,5 @@ Configure your webhooks to quickly send page information to predefined endpoints
     ```
 *   **Request Headers**: (empty)
 
-### What's New
-| Date       | Description                                 |
-| ---------- | ------------------------------------------- |
-| 2025-07-26 | Upgraded to Manifest V3. Improved UI/UX for options page with form-based editor and dynamic header fields. Removed Google Analytics. |
-| 2022-08-10 | Allow http headers to be set in the request |
-| 2018-06-02 | Add ability to send arbitrary text          |
-| 2018-05-29 | First published                             |
+### Change History
+- **2025-07-27:** Converted from a Chrome extension to a Firefox add-on, including updating to Manifest V3, improving the UI, and removing all Chrome-specific dependencies and APIs.

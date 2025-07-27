@@ -113,7 +113,7 @@ h3 {
   align-items: center;
 }
 
-#saveButton {
+#saveOptions {
   background-color: #007bff;
   color: white;
   border: none;
@@ -124,7 +124,7 @@ h3 {
   margin-right: 10px;
 }
 
-#saveButton:hover {
+#saveOptions:hover {
   background-color: #0056b3;
 }
 
@@ -210,23 +210,20 @@ hr {
 
 .bottom-buttons {
   display: flex;
-  justify-content: space-between; /* Distribute space between items */
+  justify-content: space-between;
   align-items: center;
   margin-top: 20px;
-  flex-wrap: wrap; /* Allow items to wrap to the next line if space is limited */
+  flex-wrap: wrap;
 }
 
-.bottom-buttons #addWebhook {
-  margin-top: 0; /* Override previous margin */
+#saveStatus {
+  padding: 10px 10px;
+  font-size: 16px;
+  color: #28a745;
+  margin-left: auto;
+  text-align: right; /* Right-align the text within the div */
 }
 
-.bottom-buttons .buttons {
-  margin-top: 0; /* Override previous margin */
-}
-
-.field-description {
-  font-size: 0.85em;
-  color: #666;
-  margin-top: -10px;
-  margin-bottom: 15px;
+#saveStatus.error {
+  color: #dc3545;
 }
