@@ -22,4 +22,5 @@ yarn-error.log*
 src/**/*.css
 
 # Build output
-/dist
+dist/
+dist-artifacts/

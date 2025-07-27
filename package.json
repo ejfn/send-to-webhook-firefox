@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "build": "tsc && cp -r public/. dist/",
-    "test": "web-ext run --source-dir dist/",
-    "watch": "tsc -w"
+    "web-ext:run": "web-ext run --source-dir dist/",
+    "web-ext:build": "web-ext build --source-dir dist/ --artifacts-dir dist-artifacts/"
   },
   "devDependencies": {
     "@types/firefox-webext-browser": "^120.0.4",
