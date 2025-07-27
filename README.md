@@ -1,13 +1,13 @@
 ## Send To WebHook
 
-A Chrome Extension to send links, images, or selected text to configurable webhooks. [View on Chrome Web Store](https://goo.gl/kbwRVB)
+A Browser Extension to send links, images, or selected text to configurable webhooks.
 ### How to Configure
 Configure your webhooks to quickly send page information to predefined endpoints. Each webhook configuration includes the following fields:
 *   **Webhook Name**: A descriptive name for your webhook (e.g., "My Slack Channel", "Bitrise iOS Upload"). This name will appear in the extension's popup menu.
 
-*   **Document URL Patterns**: (Optional) One pattern per line. Use this to restrict when the webhook appears. The webhook will only be available on pages whose URLs match one of these patterns. For details on pattern format, refer to [Match Patterns](https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns).
+*   **Document URL Patterns**: (Optional) One pattern per line. Use this to restrict when the webhook appears. The webhook will only be available on pages whose URLs match one of these patterns. For details on pattern format, refer to [Match Patterns](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns).
 
-*   **Target URL Patterns**: (Optional) One pattern per line. Similar to Document URL Patterns, but applies when you right-click on a link or image. The webhook will only be available for links or images whose URLs match one of these patterns. If not provided, the webhook will apply to selected text. For details on pattern format, refer to [Match Patterns](https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns).
+*   **Target URL Patterns**: (Optional) One pattern per line. Similar to Document URL Patterns, but applies when you right-click on a link or image. The webhook will only be available for links or images whose URLs match one of these patterns. If not provided, the webhook will apply to selected text. For details on pattern format, refer to [Match Patterns](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns).
 
 *   **HTTP Method**: Choose the HTTP method for the request: `POST` (for sending data) or `GET` (for retrieving data). Defaults to `POST`.
 
