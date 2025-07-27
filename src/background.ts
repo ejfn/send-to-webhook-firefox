@@ -24,15 +24,15 @@ async function updateContextMenus() {
     if (targetUrlPatterns && targetUrlPatterns.length > 0) {
       contexts.push("link", "image");
     } else {
-      contexts.push("selection", "page");
+      contexts.push("selection");
     }
 
     browser.contextMenus.create({
       id: name,
       title: name,
       contexts: contexts,
-      documentUrlPatterns: documentUrlPatterns,
-      targetUrlPatterns: targetUrlPatterns
+      documentUrlPatterns: documentUrlPatterns && documentUrlPatterns.length > 0 ? documentUrlPatterns : undefined,
+      targetUrlPatterns: targetUrlPatterns && targetUrlPatterns.length > 0 ? targetUrlPatterns : undefined
     });
   }
 }
@@ -103,9 +103,6 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       content = info.linkUrl;
     } else if (info.srcUrl) {
       content = info.srcUrl;
-    } else if (tab?.url) {
-      // If no specific element was clicked, send the page URL
-      content = tab.url;
     }
 
     await sendWebhook(clickedWebhook.action, content);

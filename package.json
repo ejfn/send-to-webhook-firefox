@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "rm -rf dist/ && tsc && cp -r public/. dist/",
+    "build": "tsc && cp -r public/. dist/",
     "test": "web-ext run --source-dir dist/",
     "watch": "tsc -w"
   },
