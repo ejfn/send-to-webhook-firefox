@@ -82,4 +82,4 @@ Configure your webhooks to quickly send page information to predefined endpoints
 *   **Request Headers**: (empty)
 
 ### Change History
-- Converted from a Chrome extension to a Firefox add-on, including updating to Manifest V3, improving the UI, and removing all Chrome-specific dependencies and APIs.
+- **2025-07-27:** Converted from a Chrome extension to a Firefox add-on, including updating to Manifest V3, improving the UI, and removing all Chrome-specific dependencies and APIs.
